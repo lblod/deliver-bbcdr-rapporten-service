@@ -16,21 +16,26 @@ new CronJob(cronFrequency, function() {
 }, null, true);
 
 const deliverPackages = async function(){
-  let reportsToDeliver = await fetchReportsByStatus(STATUS_PACKAGED);
-  reportsToDeliver = reportsToDeliver.concat((await fetchReportsByStatus(STATUS_DELIVERING)).filter(filterDeliveringTimeout));
-  reportsToDeliver = reportsToDeliver.concat(await fetchReportsByStatus(STATUS_FAILED));
+  try {
+    let reportsToDeliver = await fetchReportsByStatus(STATUS_PACKAGED);
+    reportsToDeliver = reportsToDeliver.concat((await fetchReportsByStatus(STATUS_DELIVERING)).filter(filterDeliveringTimeout));
+    reportsToDeliver = reportsToDeliver.concat(await fetchReportsByStatus(STATUS_FAILED));
 
-  reportsToDeliver.map(async report => {
-    try {
-      await updateReportStatus(report.report, STATUS_DELIVERING);
-      await deliver(report);
-      await updateReportStatus(report.report, STATUS_DELIVERED);
-    }
-    catch(e){
-      console.error(e);
-      await updateReportStatus(report.report, STATUS_FAILED);
-    }
-  });
+    reportsToDeliver.map(async report => {
+      try {
+        await updateReportStatus(report.report, STATUS_DELIVERING);
+        await deliver(report);
+        await updateReportStatus(report.report, STATUS_DELIVERED);
+      }
+      catch(e){
+        console.error(e);
+        await updateReportStatus(report.report, STATUS_FAILED);
+      }
+    });
+  }
+  catch(e){
+    console.error(e);
+  }
 };
 
 const filterDeliveringTimeout = function( report ) {
