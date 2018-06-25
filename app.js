@@ -1,5 +1,6 @@
-import {app, query, update, uuid, sparqlEscapeString, sparqlEscapeDateTime, sparqlEscapeUri } from 'mu';
-import {fetchReportsByStatus, updateReportStatus, STATUS_PACKAGED, STATUS_DELIVERING, STATUS_FAILED, STATUS_DELIVERED} from './queries';
+import { app, errorHandler } from 'mu';
+import { fetchReportsByStatus, updateReportStatus,
+         STATUS_PACKAGED, STATUS_DELIVERING, STATUS_FAILED, STATUS_DELIVERED} from './queries';
 import { deliver } from './delivery';
 import { CronJob } from 'cron';
 
@@ -11,7 +12,7 @@ app.get('/', async function( req, res ) {
 });
 
 new CronJob(cronFrequency, function() {
-  console.log(`packaging triggered by cron job at ${new Date().toISOString()}`);
+  console.log(`BBCDR delivery triggered by cron job at ${new Date().toISOString()}`);
   deliverPackages();
 }, null, true);
 
@@ -21,7 +22,7 @@ const deliverPackages = async function(){
     reportsToDeliver = reportsToDeliver.concat((await fetchReportsByStatus(STATUS_DELIVERING)).filter(filterDeliveringTimeout));
     reportsToDeliver = reportsToDeliver.concat(await fetchReportsByStatus(STATUS_FAILED));
 
-    reportsToDeliver.map(async report => {
+    reportsToDeliver.map(async (report) => {
       try {
         await updateReportStatus(report.report, STATUS_DELIVERING);
         await deliver(report);
@@ -43,3 +44,5 @@ const filterDeliveringTimeout = function( report ) {
   let currentDate = new Date();
   return ((currentDate - modifiedDate) / (1000 * 60 * 60)) >= parseInt(hoursDeliveringTimeout);
 };
+
+app.use(errorHandler);
