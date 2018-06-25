@@ -24,13 +24,13 @@ const deliverPackages = async function(){
 
     reportsToDeliver.map(async (report) => {
       try {
-        await updateReportStatus(report.report, STATUS_DELIVERING);
+        await updateReportStatus(report.uri, STATUS_DELIVERING, report.graph);
         await deliver(report);
-        await updateReportStatus(report.report, STATUS_DELIVERED);
+        await updateReportStatus(report.uri, STATUS_DELIVERED, report.graph);
       }
       catch(e){
         console.error(e);
-        await updateReportStatus(report.report, STATUS_FAILED);
+        await updateReportStatus(report.uri, STATUS_FAILED, report.graph);
       }
     });
   }

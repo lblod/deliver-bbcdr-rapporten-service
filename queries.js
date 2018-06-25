@@ -1,4 +1,5 @@
-import {query, update, uuid, sparqlEscapeString, sparqlEscapeDateTime, sparqlEscapeUri } from 'mu';
+import { sparqlEscapeDateTime, sparqlEscapeUri } from 'mu';
+import { querySudo as query, updateSudo as update } from './auth-sudo';
 
 const STATUS_PACKAGED = "http://mu.semte.ch/vocabularies/ext/bbcdr-status/PACKAGED";
 const STATUS_DELIVERING = "http://mu.semte.ch/vocabularies/ext/bbcdr-status/DELIVERING";
@@ -16,23 +17,26 @@ const fetchReportsByStatus = async function( status ) {
        PREFIX mu:   <http://mu.semte.ch/vocabularies/core/>
        PREFIX dcterms: <http://purl.org/dc/terms/>
        PREFIX bbcdr: <http://mu.semte.ch/vocabularies/ext/bbcdr/>
-       SELECT ?report ?package ?modified
-       FROM <http://mu.semte.ch/application>
+
+       SELECT ?uri ?package ?modified
        WHERE {
-         ?report bbcdr:package ?package;
-                 bbcdr:status ${sparqlEscapeUri(status)};
-                 mu:uuid ?id;
-                 dcterms:modified ?modified.
+         GRAPH ?graph {
+             ?uri bbcdr:package ?package;
+                  bbcdr:status ${sparqlEscapeUri(status)};
+                  mu:uuid ?id;
+                  dcterms:modified ?modified.
+         }
        } ORDER BY ASC(?modified)
  `);
   return parseResult(result);
 };
 
-const updateReportStatus = async function( report, status ){
+const updateReportStatus = async function( report, status, graph ){
   await update(`
        PREFIX bbcdr: <http://mu.semte.ch/vocabularies/ext/bbcdr/>
        PREFIX dcterms: <http://purl.org/dc/terms/>
-       WITH <http://mu.semte.ch/application>
+
+       WITH <${graph}>
        DELETE {
          ${sparqlEscapeUri(report)} dcterms:modified ?modified.
          ${sparqlEscapeUri(report)} bbcdr:status ?status.
