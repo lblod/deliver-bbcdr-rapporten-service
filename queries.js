@@ -18,7 +18,7 @@ const fetchReportsByStatus = async function( status ) {
        PREFIX dcterms: <http://purl.org/dc/terms/>
        PREFIX bbcdr: <http://mu.semte.ch/vocabularies/ext/bbcdr/>
 
-       SELECT ?uri ?package ?modified
+       SELECT ?id ?uri ?package ?modified ?graph
        WHERE {
          GRAPH ?graph {
              ?uri bbcdr:package ?package;
@@ -36,14 +36,11 @@ const updateReportStatus = async function( report, status, graph ){
        PREFIX bbcdr: <http://mu.semte.ch/vocabularies/ext/bbcdr/>
        PREFIX dcterms: <http://purl.org/dc/terms/>
 
-       WITH <${graph}>
        DELETE {
-         ${sparqlEscapeUri(report)} dcterms:modified ?modified.
-         ${sparqlEscapeUri(report)} bbcdr:status ?status.
-       }
-       INSERT {
-         ${sparqlEscapeUri(report)} dcterms:modified ${sparqlEscapeDateTime(new Date())};
-                                    bbcdr:status ${sparqlEscapeUri(status)}.
+         GRAPH <${graph}> {
+             ${sparqlEscapeUri(report)} dcterms:modified ?modified.
+             ${sparqlEscapeUri(report)} bbcdr:status ?status.
+         }
        }
        WHERE {
          {
@@ -52,6 +49,15 @@ const updateReportStatus = async function( report, status, graph ){
          UNION
          {
            OPTIONAL{ ${sparqlEscapeUri(report)} bbcdr:status ?status }
+         }
+       }
+
+       ;
+
+       INSERT DATA {
+         GRAPH <${graph}> {
+             ${sparqlEscapeUri(report)} dcterms:modified ${sparqlEscapeDateTime(new Date())};
+                                        bbcdr:status ${sparqlEscapeUri(status)}.
          }
        }
   `);
