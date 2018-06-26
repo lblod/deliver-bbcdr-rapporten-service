@@ -22,13 +22,17 @@ const deliverPackages = async function(){
     reportsToDeliver = reportsToDeliver.concat((await fetchReportsByStatus(STATUS_DELIVERING)).filter(filterDeliveringTimeout));
     reportsToDeliver = reportsToDeliver.concat(await fetchReportsByStatus(STATUS_FAILED));
 
+    console.log(`Found ${reportsToDeliver.length} BBCDR reports to deliver`);
     reportsToDeliver.map(async (report) => {
       try {
+        console.log(`Start delivering BBCDR report ${report.id} found in graph <${report.graph}>`);
         await updateReportStatus(report.uri, STATUS_DELIVERING, report.graph);
         await deliver(report);
         await updateReportStatus(report.uri, STATUS_DELIVERED, report.graph);
+        console.log(`Delivered BBCDR report ${report.id} successfully`);
       }
       catch(e){
+        console.log(`Failed to deliver BBCDR report ${report.id}`);
         console.error(e);
         await updateReportStatus(report.uri, STATUS_FAILED, report.graph);
       }
@@ -46,3 +50,4 @@ const filterDeliveringTimeout = function( report ) {
 };
 
 app.use(errorHandler);
+
