@@ -44,7 +44,8 @@ const uploadPackage = async function( connection, file_path, target_path ){
   let sftp = new Client();
   try {
     await sftp.connect(connection);
-    await sftp.mkdir(path.dirname(target_path), true);
+    if (process.env.ENABLE_CREATE_TARGET_DIR)
+      await sftp.mkdir(path.dirname(target_path), true);
     await sftp.put(file_path, target_path);
   }
   finally{
@@ -53,7 +54,6 @@ const uploadPackage = async function( connection, file_path, target_path ){
 };
 
 const generateTargetPath = function( report ){
-  //TODO: likely to change, depending on the specs of target system
   let file_name = path.basename(report.package);
   return path.join(process.env.TARGET_DIR, file_name);
 };

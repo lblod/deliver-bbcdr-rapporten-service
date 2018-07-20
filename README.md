@@ -18,6 +18,7 @@ services:
   TARGET_KEY: optional
   TARGET_PASSWORD: optional
   TARGET_DIR: optional
+  ENABLE_CREATE_TARGET_DIR: optional, default 'false'
   PACKAGE_CRON_PATTERN: optional, default '*/30 * * * * *'
   HOURS_DELIVERING_TIMEOUT: optional,  default '3'
   FILE_PATH: optional, default '/data/files'
