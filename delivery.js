@@ -27,7 +27,8 @@ const createConnection = function(){
   let connection = {
     host: process.env.TARGET_HOST || 'sftp',
     username: process.env.TARGET_USERNAME,
-    port: process.env.TARGET_PORT || 22
+    port: process.env.TARGET_PORT || 22,
+    algorithms: { serverHostKey: ['ssh-dss'] }
   };
 
   if(process.env.TARGET_KEY)
