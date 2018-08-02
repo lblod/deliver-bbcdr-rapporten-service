@@ -4,7 +4,7 @@ import path from 'path';
 
 const DATA_ROOT = process.env.FILE_PATH || '/data/files/';
 const SHARE_PREFIX = process.env.SHARE_PREFIX || 'share:\/\/';
-
+const ALGORITHMS = process.env.DISABLE_SSH_DSS ? {} : { serverHostKey: ['ssh-dss'] };
 /**
  * The boilerplate to deliver the package linked to report
  * returns exception on fail
@@ -28,7 +28,7 @@ const createConnection = function(){
     host: process.env.TARGET_HOST || 'sftp',
     username: process.env.TARGET_USERNAME,
     port: process.env.TARGET_PORT || 22,
-    algorithms: { serverHostKey: ['ssh-dss'] }
+    algorithms: ALGORITHMS
   };
 
   if(process.env.TARGET_KEY)
