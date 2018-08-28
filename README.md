@@ -1,12 +1,12 @@
 # deliver-bbcdr-rapporten-service
-Microservice that delivers a package linked to a bbcdr report to an sftp endpoint.
+Microservice that delivers a package linked to a BBCDR report to an sftp endpoint.
 
-## installation
+## Installation
 To add the service to your stack, add the following snippet to docker-compose.yml:
 
 ```
 services:
-  packagereports:
+  deliverreports:
     image: lblod/deliver-bbcdr-rapporten-service
 
 ```
@@ -38,5 +38,5 @@ To test the full flow, you can include
       - "2222:22"
     command: user:aPassword:::share
 ```
-in your docker-compose.override.yml or use independent service [sftp-service](https://github.com/lblod/sftp-service).
-Probably, you will want to enable the flag DISABLE_SSH_DSS to make it work on normal sftp servers.
+in your `docker-compose.override.yml` or use an independent service [sftp-service](https://github.com/lblod/sftp-service).
+Probably, you will want to enable the flag `DISABLE_SSH_DSS` to make it work on normal sftp servers.
