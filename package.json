@@ -1,6 +1,6 @@
 {
   "name": "deliver-bbcdr-rapporten-service",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Service to deliver bbcdr-report to backend",
   "scripts": {
     "dev": "nodemon server.js --watch src/ --exec babel-node",
