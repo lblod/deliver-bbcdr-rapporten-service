@@ -15,8 +15,8 @@
     "lblod"
   ],
   "dependencies": {
-    "cron": "^1.3.0",
-    "ssh2-sftp-client": "^2.2.1"
+    "cron": "^1.4.1",
+    "ssh2-sftp-client": "^3.1.0"
   },
   "author": "redpencil.io",
   "license": "MIT"
