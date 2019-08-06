@@ -6,15 +6,43 @@ import { CronJob } from 'cron';
 
 const cronFrequency = process.env.PACKAGE_CRON_PATTERN || '*/30 * * * * *';
 const hoursDeliveringTimeout = process.env.HOURS_DELIVERING_TIMEOUT || 3;
+const muSparqlEndpoint = process.env.MU_SPARQL_ENDPOINT;
+
+const rp = require('request-promise');
 
 app.get('/', async function( req, res ) {
   res.send('Hello from deliver-bbcdr-rapporten-service');
 });
 
-new CronJob(cronFrequency, function() {
+new CronJob(cronFrequency, async function() {
   console.log(`BBCDR delivery triggered by cron job at ${new Date().toISOString()}`);
+  await waitForDatabase();
   deliverPackages();
 }, null, true);
+
+const isDatabaseUp = async function() {
+  const res = await rp(muSparqlEndpoint)
+    .then(function (htmlString) {
+      return true;
+    })
+    .catch(function (err) {
+      return false;
+    });
+  return res;
+};
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+const waitForDatabase = async function() {
+  let loop = true;
+  while (loop) {
+    console.log("Waiting for database... ");
+    loop = !(await isDatabaseUp());
+    await sleep(2000);
+  }
+};
 
 const deliverPackages = async function(){
   try {
@@ -50,4 +78,3 @@ const filterDeliveringTimeout = function( report ) {
 };
 
 app.use(errorHandler);
-
