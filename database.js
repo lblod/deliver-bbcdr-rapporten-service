@@ -1,10 +1,9 @@
-import rp from 'request-promise';
-const muSparqlEndpoint = process.env.MU_SPARQL_ENDPOINT;
+import { query } from 'mu';
 
 const isDatabaseUp = async function() {
   let isUp = false;
   try {
-    await rp(muSparqlEndpoint);
+    await sendDumyQuery();
     isUp = true;
   } catch (e) {
     console.log("Waiting for database... ");
@@ -24,6 +23,22 @@ const waitForDatabase = async function(callback) {
   }
   console.log('Creating cron job.');
   callback();
+};
+
+const sendDumyQuery = async function() {
+  try {
+    const result = await query(`
+      SELECT ?s
+      WHERE {
+        GRAPH ?g {
+          ?s ?p ?o
+        }
+      }
+      LIMIT 1
+    `);
+  } catch (e) {
+    throw new Error(e.toString())
+  }
 };
 
 export { waitForDatabase };
