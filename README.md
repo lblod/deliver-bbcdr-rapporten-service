@@ -24,6 +24,7 @@ services:
   FILE_PATH: optional, default '/data/files'
   SHARE_PREFIX: optional, default 'share:\/\/'
   DISABLE_SSH_DSS: optional, default empty (useful in testing scenarios)
+  PING_DB_INTERVAL: optional, default '2' (seconds)
 ```
 ## Development
 For development options, see: [mu-javascipt-template](https://github.com/mu-semtech/mu-javascript-template)

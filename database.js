@@ -1,5 +1,7 @@
 import { query } from 'mu';
 
+const pingDbInterval = process.env.PING_DB_INTERVAL || 2;
+
 const isDatabaseUp = async function() {
   let isUp = false;
   try {
@@ -19,7 +21,7 @@ const waitForDatabase = async function(callback) {
   let loop = true;
   while (loop) {
     loop = !(await isDatabaseUp());
-    await sleep(2000);
+    await sleep(pingDbInterval*1000);
   }
   console.log('Creating cron job.');
   callback();
