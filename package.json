@@ -17,7 +17,7 @@
   "dependencies": {
     "cron": "^1.4.1",
     "request-promise": "^4.2.4",
-    "ssh2-sftp-client": "^3.1.0"
+    "ssh2-sftp-client": "^11.0.0"
   },
   "author": "redpencil.io",
   "license": "MIT"
